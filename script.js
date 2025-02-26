@@ -9,18 +9,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function testSpeed() {
-    let startTime, endTime;
-    let image = new Image();
-    let fileSize = 4.228 * 1024 * 1024; 
+    let fileSize = 4.228 * 1024 * 1024;
     let output = document.getElementById("output");
-
-
+    let image = new Image();
+    
     output.innerHTML = "Testing speed...";
 
+    let startTime = performance.now();
+
     image.onload = function () {
-        endTime = new Date().getTime();
-        let duration = (endTime - startTime) / 1000; 
-        let speedMbps = (fileSize / (duration * 1024 * 1024)).toFixed(2); 
+        let endTime = performance.now();
+        let duration = (endTime - startTime) / 1000;
+        let speedMbps = ((fileSize * 8) / (duration * 1024 * 1024)).toFixed(2);
         output.innerHTML = `Speed: ${speedMbps} Mbps`;
     };
 
@@ -28,6 +28,7 @@ function testSpeed() {
         output.innerHTML = "Error testing speed. Try again.";
     };
 
-    startTime = new Date().getTime();
-    image.src = "img.jpg?t=" + startTime; 
+    
+    image.src = `img.jpg?nocache=${Math.random()}`;
 }
+
