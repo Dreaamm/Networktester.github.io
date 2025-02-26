@@ -1,49 +1,80 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let startButton = document.getElementById("StartTest");
+    const startButton = document.getElementById("StartTest");
 
     if (startButton) {
-        startButton.addEventListener("click", testSpeed);
+        startButton.addEventListener("click", startSpeedTest);
     } else {
-        console.error("Button not found! Check your HTML file.");
+        console.error("StartTest button not found! Ensure your HTML includes a button with the ID 'StartTest'.");
     }
 });
 
-function testSpeed() {
-    let output = document.getElementById("output");
-    let fileSize = 4.228 * 1024 * 1024; 
+function startSpeedTest() {
+    const outputElement = document.getElementById("output");
+    if (!outputElement) {
+        console.error("Output element with ID 'output' not found! Ensure your HTML includes a div or span with the ID 'output' to display results.");
+        return;
+    }
+
+    const fileSizeInBytes = 4.228 * 1e6;
+    const numberOfTests = 2;
     let totalSpeed = 0;
     let testsCompleted = 0;
 
-    output.innerHTML = "Testing speed...";
+    outputElement.innerHTML = "Testing speed... (Running test 1 of " + numberOfTests + ")";
 
     function runTest() {
         let startTime, endTime;
-        let image = new Image();
+        const testImage = new Image();
 
-        image.onload = function () {
+        testImage.onload = function() {
             endTime = performance.now();
-            let duration = (endTime - startTime) / 1000; 
-            let speedMbps = ((fileSize * 8) / (duration * 1024 * 1024)).toFixed(2); 
-            totalSpeed += parseFloat(speedMbps);
+            const durationSeconds = (endTime - startTime) / 1000;
+            const speedMbps = calculateSpeedMbps(fileSizeInBytes, durationSeconds);
+            totalSpeed += speedMbps;
             testsCompleted++;
 
-            if (testsCompleted === 2) {
-                let avgSpeed = (totalSpeed / 2).toFixed(2);
-                output.innerHTML = `Average Speed: ${avgSpeed} Mbps`;
+            if (testsCompleted < numberOfTests) {
+                outputElement.innerHTML = "Testing speed... (Running test " + (testsCompleted + 1) + " of " + numberOfTests + ")";
+                runTest();
             } else {
-                runTest(); 
+                const averageSpeedMbps = calculateAverageSpeed(totalSpeed, numberOfTests);
+                displayTestResults(averageSpeedMbps, outputElement);
             }
         };
 
-        image.onerror = function () {
-            output.innerHTML = "Error testing speed. Try again.";
+        testImage.onerror = function() {
+            handleImageLoadError(outputElement);
         };
 
         startTime = performance.now();
-        image.src = "img.jpg?t=" + new Date().getTime() + Math.random();
+        testImage.src = "img.jpg?cacheBuster=" + Date.now() + "-" + Math.random();
     }
 
     runTest();
+}
+
+function calculateSpeedMbps(fileSizeBytes, durationSeconds) {
+    const speedBitsPerSecond = (fileSizeBytes * 8) / durationSeconds;
+    const speedMbps = speedBitsPerSecond / 1e6;
+    return parseFloat(speedMbps.toFixed(2));
+}
+
+function calculateAverageSpeed(totalSpeed, numberOfTests) {
+    return parseFloat((totalSpeed / numberOfTests).toFixed(2));
+}
+
+function displayTestResults(averageSpeedMbps, outputElement) {
+    outputElement.innerHTML = "Average Speed: " + averageSpeedMbps + " Mbps";
+}
+
+function handleImageLoadError(outputElement) {
+    outputElement.innerHTML = "Error loading test image. Please ensure:";
+    outputElement.innerHTML += "<ul>";
+    outputElement.innerHTML += "<li>The 'img.jpg' file exists in the same directory or the path is correctly specified.</li>";
+    outputElement.innerHTML += "<li>There are no network connectivity issues.</li>";
+    outputElement.innerHTML += "<li>CORS is correctly configured on the server if the image is hosted on a different domain.</li>";
+    outputElement.innerHTML += "</ul>";
+    outputElement.innerHTML += "Please refresh the page and try again.";
 }
 
 
