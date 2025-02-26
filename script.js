@@ -31,19 +31,8 @@ function testSpeed() {
                 let avgSpeed = (totalSpeed / 2).toFixed(2);
                 output.innerHTML = `Average Speed: ${avgSpeed} Mbps`;
             } else {
-                runTest(); 
+                runTest();
             }
         };
-
-        image.onerror = function () {
-            output.innerHTML = "Error testing speed. Try again.";
-        };
-
-        startTime = performance.now();
-        image.src = "img.jpg?t=" + new Date().getTime(); 
-    }
-
-    runTest(); 
-
 
 
