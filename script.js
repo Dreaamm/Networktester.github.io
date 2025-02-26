@@ -11,17 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
 function testSpeed() {
     let startTime, endTime;
     let image = new Image();
-    let fileSize = 924 * 1024; // 924KB file
+    let fileSize = 4.228 * 1024 * 1024; 
     let output = document.getElementById("output");
 
-    // Reset output every time the button is clicked
+
     output.innerHTML = "Testing speed...";
 
     image.onload = function () {
         endTime = new Date().getTime();
-        let duration = (endTime - startTime) / 1000; // Time in seconds
-        let speedMBps = (fileSize / (duration * 1024 * 1024)).toFixed(2); // Speed in MBps
-        output.innerHTML = `Speed: ${speedMBps} MBps`;
+        let duration = (endTime - startTime) / 1000; 
+        let speedMbps = (fileSize / (duration * 1024 * 1024)).toFixed(2); 
+        output.innerHTML = `Speed: ${speedMbps} Mbps`;
     };
 
     image.onerror = function () {
@@ -29,5 +29,5 @@ function testSpeed() {
     };
 
     startTime = new Date().getTime();
-    image.src = "img.jpg?t=" + startTime; // Ensure img.jpg exists in the same folder as your HTML file
+    image.src = "img.jpg?t=" + startTime; 
 }
