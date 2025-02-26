@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let startButton = document.getElementById("startTest");
+    let startButton = document.getElementById("StartTest");
 
     if (startButton) {
         startButton.addEventListener("click", testSpeed);
